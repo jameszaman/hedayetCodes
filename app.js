@@ -19,12 +19,20 @@ app.get('/', (req, res) => {
 
 const dataset = [
    {
-      input: "4\n1\n2\n3\n4",
-      output: "10"
+      input: "0",
+      output: "1"
    },
    {
-      input: "5\n1\n2\n3\n4\n5",
-      output: "15"
+      input: "5",
+      output: "120"
+   },
+   {
+      input: "6",
+      output: "720"
+   },
+   {
+      input: "7",
+      output: "5054"
    },
 ]
 
