@@ -47,7 +47,7 @@ app.post('/', async (req, res) => {
          })
          .then(response => {
             // console.log(response.data.output)
-            if(response.data.output == data.output) {
+            if((response.data.output == data.output) && codeResult != 'error' && codeResult != 'failed') {
                // console.log('here');
                codeResult = 'success'
             }
