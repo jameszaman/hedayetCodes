@@ -40,37 +40,39 @@ app.post('/', async (req, res) => {
    if(req.body.code) {
       let codeResult = undefined, msg = {};
       for(data of dataset) {
-         await axios.post('https://emkc.org/api/v1/piston/execute', {
-            language: req.body.language,
-            source: req.body.code,
-            stdin: data.input
-         })
-         .then(response => {
-            // console.log(response.data.output)
-            // console.log(response.data);s
-            if((response.data.output == data.output) && codeResult != 'error' && codeResult != 'failed') {
-               // console.log('here');
-               codeResult = 'success'
-            }
-            else if (response.data.output != data.output){
-               codeResult = 'failed';
-               msg.expected = data.output;
-               msg.result = response.data.output;
-            }
-            else if(response.data.stderr.length > 0) {
-               // console.log(response.data)
+         if(codeResult == undefined || codeResult == 'success') {
+            await axios.post('https://emkc.org/api/v1/piston/execute', {
+               language: req.body.language,
+               source: req.body.code,
+               stdin: data.input
+            })
+            .then(response => {
+               // console.log(response.data.output)
+               // console.log(response.data);s
+               if((response.data.output == data.output) && codeResult != 'error' && codeResult != 'failed') {
+                  // console.log('here');
+                  codeResult = 'success'
+               }
+               else if (response.data.output != data.output){
+                  codeResult = 'failed';
+                  msg.expected = data.output;
+                  msg.result = response.data.output;
+               }
+               else if(response.data.stderr.length > 0) {
+                  // console.log(response.data)
+                  codeResult = 'error';
+                  msg.error = response.data.stderr
+               }
+               else {
+                  codeResult = 'error';
+                  msg.error = 'SOMETHING IS WRONG'
+               }
+            })
+            .catch(err => {
+               console.error(err)
                codeResult = 'error';
-               msg.error = response.data.stderr
-            }
-            else {
-               codeResult = 'error';
-               msg.error = 'SOMETHING IS WRONG'
-            }
-         })
-         .catch(err => {
-            console.error(err)
-            codeResult = 'error';
-         })
+            })
+         }
       }
       res.render(__dirname + '/views/index.ejs', {codeResult, msg})
    }
