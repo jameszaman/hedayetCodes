@@ -32,13 +32,13 @@ const dataset = [
    },
    {
       input: "7",
-      output: "5054"
+      output: "5040"
    },
 ]
 
 app.post('/', async (req, res) => {
    if(req.body.code) {
-      let codeResult = undefined;
+      let codeResult = undefined, msg = {};
       for(data of dataset) {
          await axios.post('https://emkc.org/api/v1/piston/execute', {
             language: req.body.language,
@@ -47,30 +47,27 @@ app.post('/', async (req, res) => {
          })
          .then(response => {
             // console.log(response.data.output)
-            if(response.data.output == data.output) {
+            if(response.data.output == data.output && codeResult != 'error' && codeResult != 'failed') {
                // console.log('here');
                codeResult = 'success'
             }
             else if(response.data.stderr.length > 0) {
-               console.log(response.data.stderr);
-               res.render(__dirname + '/views/index.ejs', {codeResult: 'error'});
-               codeResult = undefined;
-               return;
+               // console.log(response.data)
+               codeResult = 'error';
+               msg.error = response.data.stderr
             }
             else {
-               res.render(__dirname + '/views/index.ejs', {codeResult: 'failed'});
-               codeResult = undefined;
-               return;
+               codeResult = 'failed';
+               msg.expected = data.output;
+               msg.result = response.data.output;
             }
          })
          .catch(err => {
-            console.error("UNABLE TO RUN CODE.")
-            res.render(__dirname + '/views/index.ejs', {codeResult: 'error'})
+            console.error(err)
+            codeResult = 'error';
          })
       }
-      if(codeResult) {
-         res.render(__dirname + '/views/index.ejs', {codeResult})
-      }
+      res.render(__dirname + '/views/index.ejs', {codeResult, msg})
    }
    else res.redirect('/');
 })

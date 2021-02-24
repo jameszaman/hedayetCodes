@@ -17,18 +17,18 @@
       </div>
    <%} else if(codeResult == 'failed') {%>
       <div class="alert alert-danger">
-         Your code failed.
+         Your code failed. Expected <%=msg.expected%> but got <%=msg.result%>
       </div>
    <%} else if(codeResult == 'error') {%>
       <div class="alert alert-danger">
-         Your code could not run.
+         Your code could not run. <%=msg.error%>
       </div>
    <%}%>
    <form action="/" class="form" method="POST">
       <select class="custom-select custom-select-lg mb-3" name="language">
-         <option value="Python3">Python</option>
-         <option value="C++">C++</option>
          <option value="C">C</option>
+         <option value="C++">C++</option>
+         <option value="Python3">Python</option>
       </select>
       <textarea name="code" class="text-area" class="form-control" placeholder="Write code here"></textarea>
       <button type="submit" class="btn btn-primary">Submit</button>
