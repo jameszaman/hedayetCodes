@@ -47,10 +47,15 @@ app.post('/', async (req, res) => {
          })
          .then(response => {
             // console.log(response.data.output)
-            console.log(response.data);
+            // console.log(response.data);s
             if((response.data.output == data.output) && codeResult != 'error' && codeResult != 'failed') {
                // console.log('here');
                codeResult = 'success'
+            }
+            else if (response.data.output != data.output){
+               codeResult = 'failed';
+               msg.expected = data.output;
+               msg.result = response.data.output;
             }
             else if(response.data.stderr.length > 0) {
                // console.log(response.data)
@@ -58,9 +63,8 @@ app.post('/', async (req, res) => {
                msg.error = response.data.stderr
             }
             else {
-               codeResult = 'failed';
-               msg.expected = data.output;
-               msg.result = response.data.output;
+               codeResult = 'error';
+               msg.error = 'SOMETHING IS WRONG'
             }
          })
          .catch(err => {
