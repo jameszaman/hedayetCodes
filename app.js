@@ -25,18 +25,6 @@ const dataset = [
    {
       input: '0',
       output: 1
-   },
-   {
-      input: '1',
-      output: 1
-   },
-   {
-      input: '2',
-      output: 2
-   },
-   {
-      input: '3',
-      output: 6
    }
 ]
 
