@@ -19,21 +19,9 @@ app.get('/', (req, res) => {
 
 const dataset = [
    {
-      input: "0",
+      // input: "0",
       output: "1"
-   },
-   {
-      input: "5",
-      output: "120"
-   },
-   {
-      input: "6",
-      output: "720"
-   },
-   {
-      input: "7",
-      output: "5040"
-   },
+   }
 ]
 
 app.post('/', async (req, res) => {
@@ -44,7 +32,7 @@ app.post('/', async (req, res) => {
             await axios.post('https://emkc.org/api/v1/piston/execute', {
                language: req.body.language,
                source: req.body.code,
-               stdin: data.input
+               // stdin: data.input
             })
             .then(response => {
                // console.log(response.data.output)
@@ -61,7 +49,7 @@ app.post('/', async (req, res) => {
                else if(response.data.stderr.length > 0) {
                   // console.log(response.data)
                   codeResult = 'error';
-                  msg.error = response.data.stderr
+                  msg.error = response.data + " response sent this."
                }
                else {
                   codeResult = 'error';
@@ -70,6 +58,7 @@ app.post('/', async (req, res) => {
             })
             .catch(err => {
                console.error(err)
+               msg.error = Response.data + "ERROR Happened";
                codeResult = 'error';
             })
          }
