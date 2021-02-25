@@ -13,16 +13,37 @@ app.use('/css', express.static(__dirname + '/public/css'));
 app.use('/images', express.static(__dirname + '/public/images'));
 app.set('view engine', 'ejs');
 
+// Function declarations.
+function toNum(a) {
+   if(isNaN(Number(a))) return a;
+   return Number(a);
+}
+
+
+// Input and output for questions. This should be in a Database.
+const dataset = [
+   {
+      input: '0',
+      output: 1
+   },
+   {
+      input: '1',
+      output: 1
+   },
+   {
+      input: '2',
+      output: 2
+   },
+   {
+      input: '3',
+      output: 6
+   }
+]
+
+// Routes. Currently in app.js as there are only few routes.
 app.get('/', (req, res) => {
    return res.render(__dirname + '/views/index.ejs', {codeResult: undefined});
 })
-
-const dataset = [
-   {
-      input: "0",
-      output: "1"
-   }
-]
 
 app.post('/', async (req, res) => {
    if(req.body.code) {
@@ -32,7 +53,7 @@ app.post('/', async (req, res) => {
             await axios.post('https://emkc.org/api/v1/piston/execute', {
                language: req.body.language,
                source: req.body.code,
-               // stdin: data.input
+               stdin: data.input
             })
             .then(response => {
                // console.log(response.data.output)
@@ -58,7 +79,7 @@ app.post('/', async (req, res) => {
             })
             .catch(err => {
                console.error(err)
-               msg.error = Response.data + "ERROR Happened";
+               msg.error = "ERROR Happened";
                codeResult = 'error';
             })
          }
@@ -70,6 +91,7 @@ app.post('/', async (req, res) => {
 
 
 
+// Starting the app.
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
