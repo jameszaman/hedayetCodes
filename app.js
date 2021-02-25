@@ -25,7 +25,11 @@ const dataset = [
    {
       input: '0',
       output: 1
-   }
+   },
+   {
+      input: '1',
+      output: 1
+   },
 ]
 
 // Routes. Currently in app.js as there are only few routes.
