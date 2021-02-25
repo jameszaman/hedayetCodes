@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 
 const dataset = [
    {
-      // input: "0",
+      input: "0",
       output: "1"
    }
 ]
