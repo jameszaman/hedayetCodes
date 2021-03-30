@@ -19,6 +19,42 @@ function toNum(a) {
    return Number(a);
 }
 
+function validate(req, res, codeResult, msg) {
+   return new Promise(resolve => {
+      setTimeout(() => {
+         axios.post('https://emkc.org/api/v1/piston/execute', {
+            language: req.body.language,
+            source: req.body.code,
+            stdin: data.input
+         })
+         .then(response => {
+            console.log('PROMISE');
+            if((response.data.output == data.output) && codeResult != 'error' && codeResult != 'failed') {
+               codeResult = 'success'
+            }
+            else if (response.data.output != data.output){
+               codeResult = 'failed';
+               msg.expected = data.output;
+               msg.result = response.data.output;
+            }
+            else if(response.data.stderr.length > 0) {
+               codeResult = 'error';
+               msg.error = response.data + " response sent this."
+            }
+            else {
+               codeResult = 'error';
+               msg.error = 'SOMETHING IS WRONG'
+            }
+         })
+         .catch(err => {
+            console.error(err)
+            msg.error = "ERROR Happened";
+            codeResult = 'error';
+         })
+      }, 1000);
+   })
+}
+
 
 // Input and output for questions. This should be in a Database.
 const dataset = [
@@ -42,45 +78,14 @@ app.post('/', async (req, res) => {
       let codeResult = undefined, msg = {};
       for(data of dataset) {
          if(codeResult == undefined || codeResult == 'success') {
-            await axios.post('https://emkc.org/api/v1/piston/execute', {
-               language: req.body.language,
-               source: req.body.code,
-               stdin: data.input
-            })
-            .then(response => {
-               // console.log(response.data.output)
-               // console.log(response.data);s
-               if((response.data.output == data.output) && codeResult != 'error' && codeResult != 'failed') {
-                  // console.log('here');
-                  codeResult = 'success'
-               }
-               else if (response.data.output != data.output){
-                  codeResult = 'failed';
-                  msg.expected = data.output;
-                  msg.result = response.data.output;
-               }
-               else if(response.data.stderr.length > 0) {
-                  // console.log(response.data)
-                  codeResult = 'error';
-                  msg.error = response.data + " response sent this."
-               }
-               else {
-                  codeResult = 'error';
-                  msg.error = 'SOMETHING IS WRONG'
-               }
-            })
-            .catch(err => {
-               console.error(err)
-               msg.error = "ERROR Happened";
-               codeResult = 'error';
-            })
+            console.log('HEY');
+            await validate(req, res, codeResult, msg);
          }
       }
       res.render(__dirname + '/views/index.ejs', {codeResult, msg})
    }
    else res.redirect('/');
 })
-
 
 
 // Starting the app.

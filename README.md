@@ -1,0 +1,1 @@
+This website connects to an API which returns the output of the sent code. Wanted make it work with multiple codes but does not work properly yet.
